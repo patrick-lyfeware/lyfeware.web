@@ -1,0 +1,64 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Deploy on every push to main, after code lands.
+  push:
+    branches: [main]
+  # Allow manual redeploys from the Actions tab.
+  workflow_dispatch:
+
+# Allow the workflow to publish to Pages via OIDC.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one concurrent deploy; don't cancel an in-flight production deploy.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          # Auto-enable Pages (GitHub Actions source) on first run.
+          enablement: true
+
+      - name: Build
+        # base_path comes from configure-pages (e.g. /lyfeware.web/) so asset
+        # URLs resolve correctly on the project site.
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          VITE_BUILD_SHA: ${{ github.sha }}
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
