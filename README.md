@@ -1,5 +1,8 @@
 # Lyfeboost — Web
 
+[![CI](https://github.com/patrick-lyfeware/lyfeware.web/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/patrick-lyfeware/lyfeware.web/actions/workflows/ci.yml)
+[![Deploy](https://github.com/patrick-lyfeware/lyfeware.web/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/patrick-lyfeware/lyfeware.web/actions/workflows/deploy.yml)
+
 The engineering foundation for Lyfeboost: a minimal, production-shaped web app
 with CI/CD and a live deploy. Product-agnostic on purpose — this is the base we
 build the real product on.
